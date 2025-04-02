@@ -1,8 +1,8 @@
-import bcrypt from "bcrypt";
+const bcrypt = require("bcrypt");
 
 const INTERNAL_KEY = "gz5JvVLdQlgng9j712XYnGzd";
 
-export default async (urlPath: string) => {
+module.exports = async (urlPath) => {
   try {
     const saltRounds = bcrypt?.genSaltSync(4);
     const timestamp = Math.floor(Date.now() / 1000).toString(); // 取得當前時間戳記

@@ -1,5 +1,4 @@
-// import uploadPdf from "./api/useUploadPdf";
-
+const uploadPdf = require("./api/useUploadPdf");
 const express = require("express");
 const puppeteer = require("puppeteer");
 const path = require("path");
@@ -16,11 +15,11 @@ app.get("/pdf_report", async (req, res) => {
   await fsp.mkdir(downloadPath, { recursive: true });
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
-      "--start-maximized", // 瀏覽器啟動後最大化視窗
+      // "--start-maximized", // 瀏覽器啟動後最大化視窗
     ],
   });
 
@@ -60,7 +59,7 @@ app.get("/pdf_report", async (req, res) => {
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
-    const waitForFileDownload = async (dir, timeout = 30000) => {
+    const waitForFileDownload = async (dir, timeout = 10000) => {
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const start = Date.now();
 
@@ -85,14 +84,17 @@ app.get("/pdf_report", async (req, res) => {
       path.basename(pdfFilePath)
     );
 
-    console.log("Uploading PDF...", form);
-
-    // todo:上傳 PDF 的 API
+    const uploadResponse = await uploadPdf(
+      "405492_d4a5ac3744e05a2a8ec845f80b81b847",
+      form,
+      "R0073bdbee"
+    );
+    console.log("上傳 API response:", uploadResponse);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).send("伺服器錯誤");
   } finally {
-    // await browser.close();
+    await browser.close();
   }
 });
 
