@@ -16,10 +16,12 @@ app.get("/pdf_report", async (req, res) => {
 
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: '/bin/chromium',
+    executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
       // "--start-maximized", // 瀏覽器啟動後最大化視窗
     ],
   });
