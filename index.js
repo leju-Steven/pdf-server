@@ -20,7 +20,7 @@ app.get("/pdf_report", async (req, res) => {
   puppeteer.use(StealthPlugin());
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: "new",
     executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
