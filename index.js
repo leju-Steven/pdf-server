@@ -14,6 +14,13 @@ app.get("/pdf_report", async (req, res) => {
   const downloadPath = path.resolve(__dirname, "downloads");
   await fsp.mkdir(downloadPath, { recursive: true });
 
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+  );
+  await page.setExtraHTTPHeaders({
+    "Accept-Language": "zh-TW,zh;q=0.9",
+  });
+
   const browser = await puppeteer.launch({
     headless: true,
     executablePath: "/bin/chromium",
