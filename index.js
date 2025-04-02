@@ -15,7 +15,7 @@ app.get("/pdf_report", async (req, res) => {
   await fsp.mkdir(downloadPath, { recursive: true });
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
@@ -55,6 +55,8 @@ app.get("/pdf_report", async (req, res) => {
     await page.goto("https://dev2.leju.trade/sell_house/report/R0073bdbee", {
       waitUntil: "networkidle0",
     });
+
+    await page.screenshot({ path: "debug.png", fullPage: true });
 
     // 等待按鈕出現
     await page.waitForSelector("#download-pdf-btn");
