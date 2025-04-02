@@ -1,6 +1,8 @@
 const uploadPdf = require("./api/useUploadPdf");
 const express = require("express");
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const path = require("path");
 const fs = require("fs");
 const fsp = require("fs/promises");
@@ -14,9 +16,12 @@ app.get("/pdf_report", async (req, res) => {
   const downloadPath = path.resolve(__dirname, "downloads");
   await fsp.mkdir(downloadPath, { recursive: true });
 
+  // 加入避免被網站偵測的外掛（Cloudflare / bot 防禦）
+  puppeteer.use(StealthPlugin());
+
   const browser = await puppeteer.launch({
     headless: true,
-    executablePath: "/bin/chromium",
+    // executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
