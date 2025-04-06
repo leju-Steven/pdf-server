@@ -293,25 +293,25 @@ app.get("/pdf_report", async (req, res) => {
   await page.setCookie(...cookieList);
 
   try {
-    // await browser.setCookie(
-    //   {
-    //     name: "sessionToken",
-    //     value: "405492_d4a5ac3744e05a2a8ec845f80b81b847",
-    //     domain: "dev2.leju.trade",
-    //     path: "/",
-    //     httpOnly: true,
-    //   },
-    //   {
-    //     name: "lejuLoginCookie",
-    //     value: "1",
-    //     domain: "dev2.leju.trade",
-    //     path: "/",
-    //     httpOnly: true,
-    //   }
-    // );
+    await browser.setCookie(
+      {
+        name: "sessionToken",
+        value: "405492_d4a5ac3744e05a2a8ec845f80b81b847",
+        domain: "www.leju.com.tw",
+        path: "/",
+        httpOnly: true,
+      },
+      {
+        name: "lejuLoginCookie",
+        value: "1",
+        domain: "www.leju.com.tw",
+        path: "/",
+        httpOnly: true,
+      }
+    );
 
     // 前往指定網址
-    await page.goto("https://dev2.leju.trade/sell_house/report/R0073bdbee", {
+    await page.goto("https://www.leju.com.tw/sell_house/report/Ref85443872b", {
       waitUntil: "networkidle0",
     });
 
@@ -351,7 +351,7 @@ app.get("/pdf_report", async (req, res) => {
     const uploadResponse = await uploadPdf(
       "405492_d4a5ac3744e05a2a8ec845f80b81b847",
       form,
-      "R0073bdbee"
+      "Ref85443872b"
     );
     console.log("上傳 API response:", uploadResponse);
   } catch (error) {
