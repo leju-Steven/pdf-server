@@ -1,4 +1,4 @@
-FROM arm64v8/node:18
+FROM node:18
 
 # 安裝 Chromium 所需依賴
 RUN apt-get update && apt-get install -y \
