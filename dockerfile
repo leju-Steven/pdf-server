@@ -4,6 +4,10 @@ FROM node:18
 RUN apt-get update && apt-get install -y \
   chromium \
   fonts-liberation \
+  fonts-noto-cjk \
+  fonts-wqy-zenhei \
+  fonts-arphic-uming \
+  fonts-noto-color-emoji \
   libappindicator3-1 \
   libasound2 \
   libatk-bridge2.0-0 \
