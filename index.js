@@ -1,7 +1,6 @@
 const uploadPdf = require("./api/useUploadPdf");
 const express = require("express");
 const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 const path = require("path");
 const fs = require("fs");
 const fsp = require("fs/promises");
@@ -15,9 +14,6 @@ app.get("/pdf_report", async (req, res) => {
   const downloadPath = path.resolve(__dirname, "downloads");
   await fsp.mkdir(downloadPath, { recursive: true });
 
-  // 加入避免被網站偵測的外掛（Cloudflare / bot 防禦）
-  puppeteer.use(StealthPlugin());
-
   const browser = await puppeteer.launch({
     headless: "new",
     executablePath: "/bin/chromium",
@@ -26,17 +22,13 @@ app.get("/pdf_report", async (req, res) => {
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
       "--no-sandbox",
       "--disable-setuid-sandbox",
-      // "--start-maximized", // 瀏覽器啟動後最大化視窗
+      "--start-maximized",
     ],
   });
 
   const page = await browser.newPage();
 
   await page.setUserAgent("leju-e2e");
-  await page.setViewport({ width: 1280, height: 800 });
-  await page.setExtraHTTPHeaders({
-    "Accept-Language": "zh-TW,zh;q=0.9",
-  });
 
   await page._client().send("Page.setDownloadBehavior", {
     behavior: "allow",
@@ -65,8 +57,6 @@ app.get("/pdf_report", async (req, res) => {
     await page.goto("https://dev2.leju.trade/sell_house/report/R0073bdbee", {
       waitUntil: "networkidle0",
     });
-
-    await page.screenshot({ path: "debug.png", fullPage: true });
 
     // 等待按鈕出現
     await page.waitForSelector("#download-pdf-btn");
@@ -106,6 +96,7 @@ app.get("/pdf_report", async (req, res) => {
     );
     console.log("上傳 API response:", uploadResponse);
   } catch (error) {
+    await page.screenshot({ path: "debug.png", fullPage: true });
     console.error("Error:", error);
     res.status(500).send("伺服器錯誤");
   } finally {
