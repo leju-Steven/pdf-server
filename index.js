@@ -48,14 +48,14 @@ app.get("/pdf_report", async (req, res) => {
       {
         name: "sessionToken",
         value: "405492_d4a5ac3744e05a2a8ec845f80b81b847",
-        domain: "www.leju.com.tw",
+        domain: "dev2.leju.trade",
         path: "/",
         httpOnly: true,
       },
       {
         name: "lejuLoginCookie",
         value: "1",
-        domain: "www.leju.com.tw",
+        domain: "dev2.leju.trade",
         path: "/",
         httpOnly: true,
       }
