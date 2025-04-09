@@ -4,9 +4,14 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
 const fsp = require("fs/promises");
-
+require("dotenv").config();
 const app = express();
+
+// env
 const PORT = process.env.PORT || 3000;
+const IS_LOCAL = process.env.IS_LOCAL || false;
+const DOMAIN_NAME = process.env.DOMAIN_NAME;
+const SELL_HOUSE_REPORT_URL = process.env.SELL_HOUSE_REPORT_URL;
 
 // 下載 PDF 的 API
 app.get("/pdf_report", async (req, res) => {
@@ -14,8 +19,8 @@ app.get("/pdf_report", async (req, res) => {
   await fsp.mkdir(downloadPath, { recursive: true });
 
   const browser = await puppeteer.launch({
-    headless: 'new',
-    executablePath: "/bin/chromium",
+    headless: IS_LOCAL ? false : "new",
+    executablePath: IS_LOCAL ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
@@ -39,21 +44,21 @@ app.get("/pdf_report", async (req, res) => {
       {
         name: "sessionToken",
         value: "405492_d4a5ac3744e05a2a8ec845f80b81b847",
-        domain: "dev2.leju.trade",
+        domain: DOMAIN_NAME,
         path: "/",
         httpOnly: true,
       },
       {
         name: "lejuLoginCookie",
         value: "1",
-        domain: "dev2.leju.trade",
+        domain: DOMAIN_NAME,
         path: "/",
         httpOnly: true,
       }
     );
 
     // 前往指定網址
-    await page.goto("https://dev2.leju.trade/sell_house/report/R0073bdbee", {
+    await page.goto(`${SELL_HOUSE_REPORT_URL}/R0073bdbee`, {
       waitUntil: "networkidle0",
     });
 
@@ -85,17 +90,14 @@ app.get("/pdf_report", async (req, res) => {
     const fileBuffer = await fsp.readFile(pdfFilePath);
     const fileBlob = new Blob([fileBuffer], { type: "application/pdf" });
 
-    const form = new FormData();
-    form.append("file_content", fileBlob);
-    form.append("report_id", "Rc2f187b9a36");
-
     const stats = await fsp.stat(pdfFilePath);
 
     console.log("📄 檔案大小 (bytes):", stats.size);
 
     const uploadResponse = await uploadPdf(
-      form,
-      "405492_d4a5ac3744e05a2a8ec845f80b81b847"
+      fileBlob,
+      "405492_d4a5ac3744e05a2a8ec845f80b81b847",
+      "Rc2f187b9a36"
     );
 
     if (uploadResponse.status !== 200) {
@@ -107,7 +109,7 @@ app.get("/pdf_report", async (req, res) => {
   } catch (error) {
     await page.screenshot({ path: "debug.png", fullPage: true });
     console.error("Error:", error);
-    res.status(500).send("伺服器錯誤");
+    res.status(500).send("伺服器錯誤", error);
   } finally {
     await browser.close();
   }

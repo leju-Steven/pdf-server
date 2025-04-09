@@ -1,13 +1,14 @@
 const bcrypt = require("bcryptjs");
+require('dotenv').config();
 
-const INTERNAL_KEY = "gz5JvVLdQlgng9j712XYnGzd";
+const INTERNAL_API_SECRET = process.env.INTERNAL_API_SECRET;
 
 module.exports = async (urlPath) => {
   try {
     const saltRounds = bcrypt?.genSaltSync(4);
     const timestamp = Math.floor(Date.now() / 1000).toString(); // 取得當前時間戳記
     const lejuInternalToken = bcrypt?.hashSync(
-      urlPath + INTERNAL_KEY + timestamp,
+      urlPath + INTERNAL_API_SECRET + timestamp,
       saltRounds
     );
 
