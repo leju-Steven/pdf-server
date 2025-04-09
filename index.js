@@ -14,7 +14,7 @@ app.get("/pdf_report", async (req, res) => {
   await fsp.mkdir(downloadPath, { recursive: true });
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: 'new',
     executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
