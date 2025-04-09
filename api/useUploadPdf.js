@@ -8,8 +8,8 @@ const generateInternalHeader = require("../utils/generateInternalHeader");
  * @param {String} reportId 賣屋報告 ID
  * @returns
  */
-// const API_URL = "https://dev-leju-internal-api.leju.trade";
-const API_URL = "http://ec2-43-201-79-31.ap-northeast-2.compute.amazonaws.com";
+const API_URL = "https://dev-leju-internal-api.leju.trade";
+// const API_URL = "http://ec2-43-201-79-31.ap-northeast-2.compute.amazonaws.com";
 
 module.exports = async (formData, sessionToken) => {
   // 產生內部驗證token
@@ -19,9 +19,6 @@ module.exports = async (formData, sessionToken) => {
     ...(await generateInternalHeader(urlPath)),
     sessionToken,
   };
-
-  console.log("headers", headers);
-  console.log("body", formData);
 
   try {
     return await fetch(API_URL + urlPath, {

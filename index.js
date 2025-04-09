@@ -4,7 +4,6 @@ const puppeteer = require("puppeteer");
 const path = require("path");
 const fs = require("fs");
 const fsp = require("fs/promises");
-// const FormData = require("form-data");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,7 +15,7 @@ app.get("/pdf_report", async (req, res) => {
 
   const browser = await puppeteer.launch({
     headless: false,
-    // executablePath: "/bin/chromium",
+    executablePath: "/bin/chromium",
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
@@ -87,30 +86,22 @@ app.get("/pdf_report", async (req, res) => {
     const fileBlob = new Blob([fileBuffer], { type: "application/pdf" });
 
     const form = new FormData();
-    // form.append(
-    //   "file_content",
-    //   fs.createReadStream(pdfFilePath),
-    //   path.basename(pdfFilePath)
-    // );
     form.append("file_content", fileBlob);
     form.append("report_id", "Rc2f187b9a36");
 
     const stats = await fsp.stat(pdfFilePath);
 
     console.log("📄 檔案大小 (bytes):", stats.size);
-    console.log("pdfFilePath", pdfFilePath);
-    console.log("downloadPath", downloadPath);
 
     const uploadResponse = await uploadPdf(
       form,
       "405492_d4a5ac3744e05a2a8ec845f80b81b847"
     );
 
-    console.log("上傳 API response:", uploadResponse);
-
     if (uploadResponse.status !== 200) {
       throw new Error("上傳檔案失敗");
     } else {
+      console.log("上傳成功");
       res.status(200).send("上傳成功");
     }
   } catch (error) {
@@ -118,7 +109,7 @@ app.get("/pdf_report", async (req, res) => {
     console.error("Error:", error);
     res.status(500).send("伺服器錯誤");
   } finally {
-    // await browser.close();
+    await browser.close();
   }
 });
 
