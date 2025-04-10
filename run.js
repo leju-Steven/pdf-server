@@ -38,6 +38,16 @@ module.exports = async ({ sessionToken, reportId }) => {
     console.error("🔥 Uncaught error in page context:", err);
   });
 
+  page.on("response", async (res) => {
+    if (res.url().endsWith(".pdf")) {
+      console.log("📥 有發出 PDF 請求:", res.url());
+    }
+
+    if (res.status() >= 400) {
+      console.log(`⚠️ Response ${res.status()} from ${res.url()}`);
+    }
+  });
+
   await page.setUserAgent("leju-e2e");
 
   await page._client().send("Page.setDownloadBehavior", {
