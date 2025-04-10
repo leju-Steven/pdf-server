@@ -14,10 +14,10 @@ const args = require("minimist")(process.argv.slice(2));
     await runTask({ reportId, sessionToken });
 
     console.log("✅ 任務完成");
-    process.exit(0);
+    // process.exit(0);
   } catch (error) {
     console.error("❌ 任務錯誤:", error);
-    process.exit(1); // 🔥 不要讓程式卡住
+    // process.exit(1); // 🔥 不要讓程式卡住
   }
 })();
 

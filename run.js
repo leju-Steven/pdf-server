@@ -17,7 +17,7 @@ module.exports = async ({ sessionToken, reportId }) => {
 
   const browser = await puppeteer.launch({
     headless: IS_LOCAL === "1" ? false : "new",
-    executablePath: IS_LOCAL ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
+    executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
@@ -88,8 +88,8 @@ module.exports = async ({ sessionToken, reportId }) => {
 
       while (Date.now() - start < timeout) {
         const currentFiles = await fsp.readdir(dir);
-        console.log("目前下載的檔案:", currentFiles);
         console.log("現有檔案:", existingFiles);
+        console.log("目前下載的檔案:", currentFiles);
         const newPdf = currentFiles.find(
           (file) => file.endsWith(".pdf") && !existingFiles.has(file)
         );
