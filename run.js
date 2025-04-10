@@ -1,5 +1,7 @@
 const uploadPdf = require("./api/useUploadPdf");
 const puppeteer = require("puppeteer");
+const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+
 const path = require("path");
 const fsp = require("fs/promises");
 require("dotenv").config();
@@ -15,6 +17,7 @@ module.exports = async ({ sessionToken, reportId }) => {
 
   console.log("下載路徑:", downloadPath);
 
+  puppeteer.use(StealthPlugin());
   const browser = await puppeteer.launch({
     // headless: IS_LOCAL === "1" ? false : true,
     headless: true,
