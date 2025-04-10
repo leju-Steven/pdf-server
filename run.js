@@ -16,7 +16,7 @@ module.exports = async ({ sessionToken, reportId }) => {
   console.log("下載路徑:", downloadPath);
 
   const browser = await puppeteer.launch({
-    headless: IS_LOCAL === "1" ? false : "new",
+    headless: IS_LOCAL === "1" ? false : true, // 是否開啟無頭模式（不會開啟瀏覽器UI）
     executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
