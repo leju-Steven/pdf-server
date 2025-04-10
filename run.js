@@ -86,6 +86,8 @@ module.exports = async ({ sessionToken, reportId }) => {
 
       while (Date.now() - start < timeout) {
         const currentFiles = await fsp.readdir(dir);
+        console.log("目前下載的檔案:", currentFiles);
+        console.log("現有檔案:", existingFiles);
         const newPdf = currentFiles.find(
           (file) => file.endsWith(".pdf") && !existingFiles.has(file)
         );
