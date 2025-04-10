@@ -98,13 +98,22 @@ module.exports = async ({ sessionToken, reportId }) => {
         await sleep(1000);
       }
 
-      const innerDownloadPath = path.join(downloadPath, "download");
-      if (await fsp.stat(innerDownloadPath).catch(() => null)) {
-        const innerFiles = await fsp.readdir(innerDownloadPath);
-        console.log("⬇️ download/ 內部內容:", innerFiles);
+      const downloadSubPath = path.join(downloadPath, "download");
+
+      try {
+        const stat = await fsp.stat(downloadSubPath);
+
+        if (stat.isDirectory()) {
+          const innerFiles = await fsp.readdir(downloadSubPath);
+          console.log("⬇️ download/ 資料夾內容:", innerFiles);
+        } else {
+          console.log("⚠️ download 是檔案，不是資料夾（可能是 .crdownload）");
+        }
+      } catch (e) {
+        console.log("📁 無法讀取 download 子路徑:", e.message);
       }
 
-      throw new Error("PDF 檔案下載超時");
+      // throw new Error("PDF 檔案下載超時");
     };
 
     const pdfFilePath = await waitForFileDownload(downloadPath);
