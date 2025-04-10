@@ -58,7 +58,7 @@ app.get("/pdf_report", async (req, res) => {
     );
 
     // 前往指定網址
-    await page.goto(`${SELL_HOUSE_REPORT_URL}/R0073bdbee`, {
+    await page.goto(`${SELL_HOUSE_REPORT_URL}/R85f188d9aed`, {
       waitUntil: "networkidle0",
     });
 
@@ -97,7 +97,7 @@ app.get("/pdf_report", async (req, res) => {
     const uploadResponse = await uploadPdf(
       fileBlob,
       "405492_d4a5ac3744e05a2a8ec845f80b81b847",
-      "Rc2f187b9a36"
+      "R85f188d9aed"
     );
 
     if (uploadResponse.status !== 200) {
