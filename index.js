@@ -62,6 +62,8 @@ app.get("/pdf_report", async (req, res) => {
       waitUntil: "networkidle0",
     });
 
+    console.log("前往網址:", `${SELL_HOUSE_REPORT_URL}/R85f188d9aed`);
+
     // 等待按鈕出現
     await page.waitForSelector("#download-pdf-btn");
 
