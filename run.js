@@ -162,7 +162,7 @@ module.exports = async ({ sessionToken, reportId }) => {
       await fsp.rm(pdfFilePath, { force: true, recursive: true });
     }
   } catch (error) {
-    await page.screenshot({ path: "debug.png", fullPage: true });
+    await page.screenshot({ path: "output/debug.png", fullPage: true });
     throw error; // 讓上層捕捉錯誤
   } finally {
     await browser.close();
