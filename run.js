@@ -43,13 +43,7 @@ module.exports = async ({ sessionToken, reportId }) => {
   });
 
   page.on("response", async (res) => {
-    if (res.url().endsWith(".pdf")) {
-      console.log("📥 有發出 PDF 請求:", res.url());
-    }
-
-    if (res.status() >= 400) {
-      console.log(`⚠️ Response ${res.status()} from ${res.url()}`);
-    }
+    console.log(`⚠️ Response ${res.status()} from ${res.url()}`);
   });
 
   // await page.setUserAgent("leju-e2e");
@@ -108,7 +102,7 @@ module.exports = async ({ sessionToken, reportId }) => {
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
-    const waitForFileDownload = async (dir, timeout = 20000) => {
+    const waitForFileDownload = async (dir, timeout = 10000) => {
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const start = Date.now();
 
