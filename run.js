@@ -17,8 +17,7 @@ module.exports = async ({ sessionToken, reportId }) => {
   console.log("下載路徑:", downloadPath);
 
   const browser = await puppeteer.launch({
-    // headless: IS_LOCAL === "1" ? false : true,
-    headless: "new",
+    headless: true,
     executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
@@ -37,10 +36,6 @@ module.exports = async ({ sessionToken, reportId }) => {
 
   page.on("pageerror", (err) => {
     console.error("🔥 Uncaught error in page context:", err);
-  });
-
-  page.on("response", async (res) => {
-    console.log(`⚠️ Response ${res.status()} from ${res.url()}`);
   });
 
   await page.setUserAgent("leju-e2e");
@@ -82,9 +77,6 @@ module.exports = async ({ sessionToken, reportId }) => {
 
     console.log("✅ 成功抓到按鈕！");
 
-    // 點擊下載按鈕前，先記下現有檔案
-    const existingFiles = new Set(await fsp.readdir(downloadPath));
-
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
@@ -94,12 +86,9 @@ module.exports = async ({ sessionToken, reportId }) => {
 
       while (Date.now() - start < timeout) {
         const currentFiles = await fsp.readdir(dir);
-        console.log("現有檔案:", existingFiles);
-        console.log("目前下載的檔案:", currentFiles);
-        // 找出還沒完成的下載檔案
-        const downloading = currentFiles.find(
-          (f) => f.endsWith(".crdownload") || f === "download"
-        );
+
+        // 找出檔名為download的檔案
+        const downloadFile = currentFiles.find((f) => f === "download");
 
         // 找出已完成的 PDF
         const completed = currentFiles.find((f) => f.endsWith(".pdf"));
@@ -109,15 +98,21 @@ module.exports = async ({ sessionToken, reportId }) => {
           return path.join(dir, completed);
         }
 
-        if (downloading) {
-          console.log("⏳ 檔案仍在下載中:", downloading);
+        // 如果有下載中的檔案，則重新命名為 reportId.pdf（否則無法上傳）
+        if (downloadFile) {
+          const newName = `${reportId}.pdf`;
+          const newPath = path.join(dir, newName);
+
+          await fsp.rename(path.join(dir, downloadFile), newPath);
+          console.log("✅ 重新命名下載檔案為:", newPath);
+          return newPath;
         } else {
           console.log("❓ 沒有下載中檔案也沒有 PDF，可能是失敗");
         }
         await sleep(1000);
       }
 
-      // throw new Error("PDF 檔案下載超時");
+      throw new Error("PDF 檔案下載超時");
     };
 
     const pdfFilePath = await waitForFileDownload(downloadPath);
