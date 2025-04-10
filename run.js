@@ -18,6 +18,16 @@ module.exports = async ({ sessionToken, reportId }) => {
   console.log("下載路徑:", downloadPath);
 
   puppeteer.use(StealthPlugin());
+  await page.setUserAgent(
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
+      "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+  );
+
+  await page.setExtraHTTPHeaders({
+    "accept-language": "zh-TW,zh;q=0.9,en;q=0.8",
+    referer: "https://dev2.leju.trade",
+  });
+
   const browser = await puppeteer.launch({
     // headless: IS_LOCAL === "1" ? false : true,
     headless: true,
