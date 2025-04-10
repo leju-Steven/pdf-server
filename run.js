@@ -1,6 +1,5 @@
 const uploadPdf = require("./api/useUploadPdf");
-const puppeteer = require("puppeteer-extra");
-const StealthPlugin = require("puppeteer-extra-plugin-stealth");
+const puppeteer = require("puppeteer");
 
 const path = require("path");
 const fsp = require("fs/promises");
@@ -17,11 +16,9 @@ module.exports = async ({ sessionToken, reportId }) => {
 
   console.log("下載路徑:", downloadPath);
 
-  puppeteer.use(StealthPlugin());
-
   const browser = await puppeteer.launch({
     // headless: IS_LOCAL === "1" ? false : true,
-    headless: true,
+    headless: "new",
     executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
@@ -46,18 +43,7 @@ module.exports = async ({ sessionToken, reportId }) => {
     console.log(`⚠️ Response ${res.status()} from ${res.url()}`);
   });
 
-  // await page.setUserAgent("leju-e2e");
-
-  await page.setUserAgent(
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 " +
-      "(KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36" +
-      "leju-e2e"
-  );
-
-  await page.setExtraHTTPHeaders({
-    "accept-language": "zh-TW,zh;q=0.9,en;q=0.8",
-    referer: "https://dev2.leju.trade",
-  });
+  await page.setUserAgent("leju-e2e");
 
   await page._client().send("Page.setDownloadBehavior", {
     behavior: "allow",
