@@ -83,7 +83,7 @@ module.exports = async ({ sessionToken, reportId }) => {
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
-    const waitForFileDownload = async (dir, timeout = 10000) => {
+    const waitForFileDownload = async (dir, timeout = 20000) => {
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const start = Date.now();
 
