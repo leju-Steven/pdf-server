@@ -13,6 +13,8 @@ module.exports = async ({ sessionToken, reportId }) => {
   const downloadPath = path.resolve(__dirname, "downloads");
   await fsp.mkdir(downloadPath, { recursive: true });
 
+  console.log("下載路徑:", downloadPath);
+
   const browser = await puppeteer.launch({
     headless: IS_LOCAL ? false : "new",
     executablePath: IS_LOCAL ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
