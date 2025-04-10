@@ -16,7 +16,8 @@ module.exports = async ({ sessionToken, reportId }) => {
   console.log("下載路徑:", downloadPath);
 
   const browser = await puppeteer.launch({
-    headless: IS_LOCAL === "1" ? false : true, // 是否開啟無頭模式（不會開啟瀏覽器UI）
+    // headless: IS_LOCAL === "1" ? false : true,
+    headless: true,
     executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
@@ -90,27 +91,25 @@ module.exports = async ({ sessionToken, reportId }) => {
         const currentFiles = await fsp.readdir(dir);
         console.log("現有檔案:", existingFiles);
         console.log("目前下載的檔案:", currentFiles);
-        const newPdf = currentFiles.find(
-          (file) => file.endsWith(".pdf") && !existingFiles.has(file)
+        // 找出還沒完成的下載檔案
+        const downloading = currentFiles.find(
+          (f) => f.endsWith(".crdownload") || f === "download"
         );
 
-        if (newPdf) return path.join(dir, newPdf);
-        await sleep(1000);
-      }
+        // 找出已完成的 PDF
+        const completed = currentFiles.find((f) => f.endsWith(".pdf"));
 
-      const downloadSubPath = path.join(downloadPath, "download");
-
-      try {
-        const stat = await fsp.stat(downloadSubPath);
-
-        if (stat.isDirectory()) {
-          const innerFiles = await fsp.readdir(downloadSubPath);
-          console.log("⬇️ download/ 資料夾內容:", innerFiles);
-        } else {
-          console.log("⚠️ download 是檔案，不是資料夾（可能是 .crdownload）");
+        if (completed) {
+          console.log("✅ PDF 下載完成:", completed);
+          return path.join(dir, completed);
         }
-      } catch (e) {
-        console.log("📁 無法讀取 download 子路徑:", e.message);
+
+        if (downloading) {
+          console.log("⏳ 檔案仍在下載中:", downloading);
+        } else {
+          console.log("❓ 沒有下載中檔案也沒有 PDF，可能是失敗");
+        }
+        await sleep(1000);
       }
 
       // throw new Error("PDF 檔案下載超時");
@@ -134,6 +133,8 @@ module.exports = async ({ sessionToken, reportId }) => {
       throw new Error("上傳檔案失敗");
     } else {
       console.log("上傳成功");
+
+      await fsp.rm(pdfFilePath, { force: true, recursive: true });
     }
   } catch (error) {
     await page.screenshot({ path: "debug.png", fullPage: true });
