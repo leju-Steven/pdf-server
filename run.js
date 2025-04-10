@@ -80,14 +80,12 @@ module.exports = async ({ sessionToken, reportId }) => {
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
-    const waitForFileDownload = async (dir, timeout = 15000) => {
+    const waitForFileDownload = async (dir, timeout = 10000) => {
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const start = Date.now();
 
       while (Date.now() - start < timeout) {
         const currentFiles = await fsp.readdir(dir);
-        console.log("目前下載的檔案:", currentFiles);
-        console.log("現有檔案:", existingFiles);
         const newPdf = currentFiles.find(
           (file) => file.endsWith(".pdf") && !existingFiles.has(file)
         );
