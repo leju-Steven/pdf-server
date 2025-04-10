@@ -105,6 +105,13 @@ module.exports = async ({ sessionToken, reportId }) => {
     // 點擊下載按鈕前，先記下現有檔案
     const existingFiles = new Set(await fsp.readdir(downloadPath));
 
+    // 等待 3 秒再點擊
+    await page.waitForTimeout(1000);
+
+    // 模擬滑鼠移動
+    await page.mouse.move(100, 100);
+    await page.mouse.move(200, 200);
+
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
