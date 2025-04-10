@@ -1,5 +1,5 @@
 const uploadPdf = require("./api/useUploadPdf");
-const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer-extra");
 const StealthPlugin = require("puppeteer-extra-plugin-stealth");
 
 const path = require("path");
