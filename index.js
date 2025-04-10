@@ -9,7 +9,7 @@ const app = express();
 
 // env
 const PORT = process.env.PORT || 3000;
-const IS_LOCAL = process.env.IS_LOCAL || false;
+const IS_LOCAL = process.env.IS_LOCAL;
 const DOMAIN_NAME = process.env.DOMAIN_NAME;
 const SELL_HOUSE_REPORT_URL = process.env.SELL_HOUSE_REPORT_URL;
 
@@ -19,8 +19,8 @@ app.get("/pdf_report", async (req, res) => {
   await fsp.mkdir(downloadPath, { recursive: true });
 
   const browser = await puppeteer.launch({
-    headless: IS_LOCAL ? false : "new",
-    executablePath: IS_LOCAL ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
+    headless: IS_LOCAL === "1" ? false : "new",
+    executablePath: IS_LOCAL === "1" ? "" : "/bin/chromium", // 指定 Chrome 的路徑(本地不需要因為通常都有內建了)
     defaultViewport: null, // 使用原生 viewport size
     args: [
       "--disable-features=SameSiteByDefaultCookies,CookiesWithoutSameSiteMustBeSecure",
