@@ -98,6 +98,12 @@ module.exports = async ({ sessionToken, reportId }) => {
         await sleep(1000);
       }
 
+      const innerDownloadPath = path.join(downloadPath, "download");
+      if (await fsp.stat(innerDownloadPath).catch(() => null)) {
+        const innerFiles = await fsp.readdir(innerDownloadPath);
+        console.log("⬇️ download/ 內部內容:", innerFiles);
+      }
+
       throw new Error("PDF 檔案下載超時");
     };
 
