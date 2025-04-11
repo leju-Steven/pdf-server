@@ -125,11 +125,8 @@ module.exports = async ({ sessionToken, reportId }) => {
     const stats = await fsp.stat(pdfFilePath);
 
     console.log("📄 檔案大小 (bytes):", stats.size);
-    console.log("sessionToken:", sessionToken);
 
     const uploadResponse = await uploadPdf(fileBlob, sessionToken, reportId);
-
-    console.log("上傳回應:", uploadResponse);
 
     if (uploadResponse.status !== 200) {
       throw new Error("上傳檔案失敗");
