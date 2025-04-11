@@ -3,7 +3,11 @@ const args = require("minimist")(process.argv.slice(2));
 
 (async () => {
   try {
+    console.log("args.reportId:", args.reportId);
+    console.log("process.env.reportId:", process.env.reportId);
     const reportId = args.reportId || process.env.reportId;
+
+    console.log("reportId:", reportId);
 
     if (!reportId) {
       throw new Error("❗ 缺少必要參數 (--reportId)");

@@ -68,6 +68,7 @@ module.exports = async ({ sessionToken, reportId }) => {
       waitUntil: "networkidle0",
     });
 
+    console.log("前往網址:", `${SELL_HOUSE_REPORT_URL}/${reportId}`);
     console.log("等待按鈕出現");
 
     // 等待按鈕出現
