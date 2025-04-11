@@ -129,6 +129,8 @@ module.exports = async ({ sessionToken, reportId }) => {
 
     const uploadResponse = await uploadPdf(fileBlob, sessionToken, reportId);
 
+    console.log("上傳回應:", uploadResponse);
+
     if (uploadResponse.status !== 200) {
       throw new Error("上傳檔案失敗");
     } else {
