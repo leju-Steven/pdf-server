@@ -38,6 +38,12 @@ module.exports = async ({ sessionToken, reportId }) => {
     console.error("🔥 Uncaught error in page context:", err);
   });
 
+  page.on("response", (res) => {
+    if (res.status() >= 400) {
+      console.warn(`⚠️ Response ${res.status()} from ${res.url()}`);
+    }
+  });
+
   await page.setUserAgent("leju-e2e");
 
   await page._client().send("Page.setDownloadBehavior", {
@@ -73,7 +79,7 @@ module.exports = async ({ sessionToken, reportId }) => {
 
     // 等待按鈕出現
     await page.waitForSelector("#download-pdf-btn", {
-      timeout: 15000,
+      timeout: 30000,
     });
 
     console.log("✅ 成功抓到按鈕！");
@@ -81,7 +87,7 @@ module.exports = async ({ sessionToken, reportId }) => {
     // 模擬點擊
     await page.click("#download-pdf-btn");
 
-    const waitForFileDownload = async (dir, timeout = 10000) => {
+    const waitForFileDownload = async (dir, timeout = 30000) => {
       const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
       const start = Date.now();
 
